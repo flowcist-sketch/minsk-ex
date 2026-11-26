@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#101b2b">
+  <title>Минск: ожившая история — AR-экскурсия</title>
+  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.4.7/three.js/build/ar-threex.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.4.7/aframe/build/aframe-ar.js"></script>
+  <style>
+    :root{--navy:#101b2b;--gold:#e6bd72;--paper:#f5f1e8}
+    *{box-sizing:border-box} body{margin:0;background:var(--navy);color:white;font:16px system-ui,-apple-system,Segoe UI,sans-serif}
+    #ar-scene{position:fixed;inset:0;z-index:0}
+    .top{position:fixed;z-index:5;top:0;left:0;right:0;padding:calc(12px + env(safe-area-inset-top)) 16px 12px;background:linear-gradient(#101b2beF,transparent)}
+    .brand{font-size:12px;letter-spacing:.16em;color:var(--gold);text-transform:uppercase}
+    h1{font-size:22px;margin:4px 0}.sub{font-size:13px;color:#e5e7eb}
+    .panel{position:fixed;z-index:5;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));max-height:48vh;overflow:auto;background:#101b2bf2;border:1px solid #ffffff26;border-radius:20px;padding:15px;backdrop-filter:blur(12px);box-shadow:0 12px 40px #0007}
+    .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    button,select{border:1px solid #ffffff35;border-radius:12px;padding:10px 12px;background:#24364c;color:white;font:inherit}
+    button.active{background:var(--gold);color:#172033;border-color:var(--gold);font-weight:700}
+    .gold{color:var(--gold)} .desc{line-height:1.45;font-size:14px;color:#f1f3f5}
+    .hint{font-size:12px;color:#cbd5e1;margin-top:9px}
+    .pill{font-size:11px;border:1px solid #ffffff40;border-radius:99px;padding:4px 8px;color:#dbeafe}
+    #ar-status{font-size:12px;color:#fde7b1;margin:8px 0}
+    #intro{position:fixed;z-index:10;inset:0;background:linear-gradient(145deg,#101b2b,#24364c);display:flex;align-items:center;justify-content:center;padding:24px}
+    .intro-card{max-width:520px;background:#ffffff0c;border:1px solid #ffffff22;border-radius:24px;padding:24px}
+    .intro-card h2{font-size:27px;margin:8px 0}.intro-card p{line-height:1.5;color:#e2e8f0}
+    .small{font-size:12px;color:#cbd5e1}
+    a{color:var(--gold)}
+    @media(min-width:800px){.panel{max-width:430px;right:20px;left:auto;bottom:20px}.top{max-width:600px}}
+  </style>
+</head>
+<body>
+  <div id="intro">
+    <div class="intro-card">
+      <div class="brand">Интерактивная AR-экскурсия</div>
+      <h2>Минск: ожившая история</h2>
+      <p>Исследуйте четыре места исторического центра. Наведите камеру на маркер <b>Hiro</b> — и на экране появится виртуальная сцена. Можно читать истории и слушать аудиорассказ.</p>
+      <p class="small">Для AR нужен смартфон, браузер с доступом к камере и интернет. Разрешите доступ к камере при запуске.</p>
+      <button class="active" id="start">Начать экскурсию</button>
+      <p class="small">Если камера не запускается, откройте страницу по HTTPS и разрешите доступ к камере.</p>
+    </div>
+  </div>
+
+  <div class="top">
+    <div class="brand">Минск · Беларусь</div>
+    <h1>Ожившая история</h1>
+    <div class="sub">AR-путешествие по историческому центру</div>
+  </div>
+
+  <a-scene id="ar-scene" embedded renderer="logarithmicDepthBuffer: true; colorManagement: true"
+    vr-mode-ui="enabled:false" arjs="sourceType: webcam; debugUIEnabled:false; trackingMethod: best;">
+    <a-marker preset="hiro" id="hiro-marker">
+      <a-entity id="landmark" position="0 0 0">
+        <!-- stylized virtual city hall: tower + roof + body -->
+        <a-box position="0 .65 0" width="1.1" height="1.1" depth=".75" color="#e8dfc8"></a-box>
+        <a-cone position="0 1.42 0" radius-bottom=".78" radius-top="0" height=".72" color="#9b443b"></a-cone>
+        <a-box position="0 2.02 0" width=".12" height=".55" depth=".12" color="#e6bd72"></a-box>
+        <a-sphere position="0 2.34 0" radius=".10" color="#e6bd72"></a-sphere>
+        <a-box position="-.28 .72 .39" width=".12" height=".28" depth=".025" color="#354b63"></a-box>
+        <a-box position=".28 .72 .39" width=".12" height=".28" depth=".025" color="#354b63"></a-box>
+        <a-cylinder position="0 .12 0" radius=".9" height=".06" color="#e6bd72"></a-cylinder>
+        <a-text value="МИНСК" position="0 2.62 0" align="center" color="#ffffff" width="4" scale=".8 .8 .8"></a-text>
+        <a-entity animation="property: rotation; to: 0 360 0; loop:true; dur:18000; easing:linear"></a-entity>
+      </a-entity>
+    </a-marker>
+    <a-entity camera></a-entity>
+  </a-scene>
+
+  <div class="panel">
+    <div class="row" style="justify-content:space-between">
+      <span class="pill" id="stop-count">Остановка 1 из 4</span>
+      <span class="pill">Маркер: HIRO</span>
+    </div>
+    <div id="ar-status">Наведите камеру на маркер Hiro, чтобы увидеть 3D-сцену.</div>
+    <div class="row" id="stop-buttons"></div>
+    <h2 class="gold" id="stop-title" style="font-size:20px;margin:12px 0 5px">Минская ратуша</h2>
+    <div class="desc" id="stop-desc"></div>
+    <div class="row" style="margin-top:12px">
+      <button class="active" id="speak">▶ Слушать рассказ</button>
+      <button id="stop-speech">■ Остановить</button>
+      <button id="quiz">✦ Вопрос</button>
+    </div>
+    <div id="quiz-result" class="hint"></div>
+    <div class="hint">Подсказка: для демонстрации в аудитории распечатайте маркер Hiro и покажите его камере телефона.</div>
+  </div>
+
+<script>
+const stops = [
+ {title:"Минская ратуша",short:"Ратуша",desc:"Минская ратуша — символ городского самоуправления. В 1499 году Минск получил Магдебургское право. Оно давало горожанам право самостоятельно решать ряд вопросов городской жизни. Современное здание восстановлено в историческом центре на площади Свободы.",audio:"Перед вами Минская ратуша — символ городского самоуправления. В 1499 году Минск получил Магдебургское право, которое давало городу право самостоятельно решать ряд вопросов городской жизни." ,q:"В каком году Минск получил Магдебургское право?",a:"1499"},
+ {title:"Костёл Девы Марии",short:"Костёл",desc:"Архикафедральный костёл Имени Пресвятой Девы Марии — важный памятник барочной архитектуры Минска. Его история связана с духовной и культурной жизнью города, а расположение рядом с площадью Свободы делает его частью исторического ансамбля Верхнего города.",audio:"Архикафедральный костёл Имени Пресвятой Девы Марии — важный памятник барочной архитектуры Минска. Он связан с духовной и культурной жизнью города.",q:"Какой архитектурный стиль особенно заметен в облике храма?",a:"Барокко"},
+ {title:"Свято-Духов собор",short:"Собор",desc:"Свято-Духов кафедральный собор — один из узнаваемых символов Верхнего города. Его светлый фасад и выразительные башни формируют характерный силуэт исторического центра. Собор связан с религиозной и культурной историей Минска.",audio:"Свято-Духов кафедральный собор — один из узнаваемых символов Верхнего города. Его архитектура формирует характерный силуэт исторического центра Минска.",q:"В какой части Минска находится собор?",a:"Верхний город"},
+ {title:"Троицкое предместье",short:"Троицкое",desc:"Троицкое предместье — один из самых атмосферных исторических районов Минска на берегу Свислочи. Здесь можно представить повседневную жизнь старого города: торговлю, ремёсла, небольшие лавки и городские улицы. Сегодня это популярное место прогулок и знакомства с историей столицы.",audio:"Троицкое предместье — один из самых атмосферных исторических районов Минска на берегу Свислочи. Здесь можно представить повседневную жизнь старого города: торговлю, ремёсла и городские улицы.",q:"Какая река протекает рядом с Троицким предместьем?",a:"Свислочь"}
+];
+let current=0;
+const $=id=>document.getElementById(id);
+function render(){
+ const s=stops[current]; $("stop-count").textContent=`Остановка ${current+1} из ${stops.length}`;
+ $("stop-title").textContent=s.title; $("stop-desc").textContent=s.desc; $("quiz-result").textContent="";
+ document.querySelectorAll("#stop-buttons button").forEach((b,i)=>b.classList.toggle("active",i===current));
+}
+stops.forEach((s,i)=>{const b=document.createElement("button");b.textContent=s.short;b.onclick=()=>{current=i;render()};$("stop-buttons").appendChild(b)});
+$("start").onclick=()=>{$("intro").style.display="none"; if(navigator.mediaDevices?.getUserMedia){navigator.mediaDevices.getUserMedia({video:{facingMode:"environment"}}).then(stream=>stream.getTracks().forEach(t=>t.stop())).catch(()=>{$("ar-status").textContent="Не удалось получить доступ к камере. Проверьте разрешения браузера и HTTPS."})}};
+$("speak").onclick=()=>{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(stops[current].audio);u.lang="ru-RU";u.rate=.92;speechSynthesis.speak(u)};
+$("stop-speech").onclick=()=>speechSynthesis.cancel();
+$("quiz").onclick=()=>{const answer=prompt(stops[current].q);$("quiz-result").textContent=answer?.trim().toLowerCase()===stops[current].a.toLowerCase()?"Верно! Отличная работа.":"Ответ: "+stops[current].a};
+const marker=$("hiro-marker");
+marker.addEventListener("markerFound",()=>$("ar-status").textContent="Маркер найден — виртуальная сцена активна!");
+marker.addEventListener("markerLost",()=>$("ar-status").textContent="Маркер не виден. Наведите камеру на Hiro.");
+render();
+</script>
+</body>
+</html>

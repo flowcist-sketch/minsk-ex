@@ -148,6 +148,72 @@ header p{font-size:10px}
  .action{font-size:10px}
 }
 
+
+/* Camera layer: AR.js places its video behind the page by default.
+   Keep the document transparent so the live camera remains visible. */
+html,body{background:transparent!important;color:#fff;overflow:hidden!important;width:100%;height:100%;height:100dvh;min-height:0}
+body{position:fixed;inset:0}
+#scene{z-index:-2!important;background:#101827}
+#arjs-video{position:fixed!important;inset:0!important;display:block!important;width:100vw!important;height:100vh!important;height:100dvh!important;max-width:none!important;max-height:none!important;object-fit:cover!important;z-index:0!important}
+a-scene#ar-scene{position:fixed!important;inset:0!important;display:block!important;width:100vw!important;height:100vh!important;height:100dvh!important;max-width:none!important;max-height:none!important;overflow:hidden!important;z-index:1!important;pointer-events:none!important}
+a-scene#ar-scene canvas,.a-canvas{position:absolute!important;inset:0!important;display:block!important;width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;background:transparent!important;z-index:1!important}
+.scrim{z-index:2;background:linear-gradient(180deg,#07111d88 0%,transparent 23%,transparent 48%,#07111dcc 100%)}
+header{z-index:4;padding:calc(9px + env(safe-area-inset-top,0px)) 14px 5px}
+header h1{font-family:Georgia,serif;font-size:clamp(19px,5vw,25px);margin:2px 0 0}
+header p{display:none}
+header .brand{font-size:9px}
+#panel{z-index:5;left:0;right:0;bottom:0;max-height:39dvh;max-height:39svh;overflow:hidden;border:0;border-top:1px solid #ffffff2a;border-radius:20px 20px 0 0;padding:10px 12px calc(9px + var(--safe));background:linear-gradient(180deg,#101b2be8,#08111df5);box-shadow:0 -8px 34px #0007;backdrop-filter:blur(12px);display:flex;flex-direction:column}
+.panel-head{min-height:18px}
+.eyebrow{font-size:9px}
+.pill{font-size:9px;padding:4px 8px}
+#status{font-size:10px;line-height:1.2;margin:4px 0 6px;min-height:12px;max-height:24px;overflow:hidden}
+.station-list{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}
+.station{padding:7px 3px 6px;border-radius:10px;font-size:10px;line-height:1.05;white-space:normal}
+.station .num{font-size:8px;margin-bottom:3px}
+.content{grid-template-columns:minmax(0,1fr);gap:0;margin-top:7px;align-items:start}
+.photo-wrap{display:none}
+#stop-title{font-size:17px;line-height:1.1;margin:0 0 4px}
+#desc{font-size:10px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.actions{gap:6px;margin-top:7px;flex-wrap:nowrap}
+.action{flex:1;min-width:0;padding:8px 5px;font-size:10px;white-space:nowrap;border-radius:10px}
+.utility-row{margin-top:5px;padding-top:4px;border-top:0}
+.text-button{font-size:9px;padding:4px}
+#credits{display:none}
+#help{position:absolute;left:10px;right:10px;bottom:calc(100% + 7px);max-height:28dvh;overflow:auto;background:#0b1421f2;box-shadow:0 4px 25px #0008}
+#quizbox{max-height:22dvh;overflow:auto;margin-top:6px;padding:8px}
+#quizq{font-size:10px;margin-bottom:5px}
+#answers{grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
+#answers button{padding:7px 5px;font-size:9px;text-align:center}
+#feedback{font-size:10px;margin-top:5px}
+#intro{z-index:10;overflow-y:auto;padding:12px}
+.intro-card{padding:17px;width:min(100%,420px)}
+.intro-mark{width:36px;height:36px;font-size:20px;margin-bottom:9px}
+.intro-card h2{font-size:clamp(26px,7vw,34px);margin-bottom:8px}
+.intro-card p{font-size:11px;line-height:1.4;margin-bottom:8px}
+.intro-points{gap:6px;margin:10px 0}
+.intro-point{padding:8px;font-size:9px}
+.intro-point strong{font-size:10px}
+#start{padding:11px;font-size:12px}
+.intro-note{font-size:9px!important}
+@media(max-width:360px){
+ #panel{max-height:42dvh;padding:8px 9px calc(7px + var(--safe))}
+ .station{font-size:9px;padding:6px 2px}
+ #stop-title{font-size:15px}
+ #desc{font-size:9px}
+ .action{font-size:9px;padding:7px 3px}
+ header h1{font-size:18px}
+}
+@media(min-width:760px){
+ header{padding:15px 20px}
+ header p{display:block;font-size:11px}
+ #panel{left:16px;right:16px;bottom:16px;width:auto;max-height:32dvh;border:1px solid #ffffff2a;border-radius:18px;padding:12px 14px}
+ .content{grid-template-columns:minmax(0,1fr)}
+ .photo-wrap{display:none}
+ #stop-title{font-size:20px}
+ #desc{font-size:11px;-webkit-line-clamp:2}
+ .station{font-size:11px}
+}
+
 </style>
 </head>
 <body>
@@ -168,13 +234,13 @@ header p{font-size:10px}
    <div class="intro-point"><strong>04 · Викторина</strong>Проверьте, что удалось запомнить.</div>
   </div>
   <button id="start">Открыть экскурсию</button>
-  <p class="intro-note">Понадобятся интернет, доступ к камере и маркер Hiro на распечатке или втором экране. Камера запускается при открытии страницы. Если браузер спросит разрешение — нажмите «Разрешить». Маркер Hiro нужно показать с другого экрана или распечатать.</p>
+  <p class="intro-note">Понадобятся интернет, доступ к камере и маркер Hiro на распечатке или втором экране. Камера запускается при открытии страницы. После разрешения камера должна быть видна на весь экран. Маркер Hiro покажите с другого экрана или распечатайте.</p>
  </div>
 </div>
 
 <section id="panel" aria-label="Управление экскурсией">
- <div class="panel-head"><span class="eyebrow">Ваш маршрут</span><span class="pill" id="counter">Остановка 1 из 4</span></div>
- <div id="status" role="status" aria-live="polite">Наведите камеру на маркер Hiro. Выберите остановку ниже.</div>
+ <div class="panel-head"><span class="eyebrow">Ваш маршрут</span><span class="pill" id="counter">1 / 4</span></div>
+ <div id="status" role="status" aria-live="polite">Камера готовится. Наведите её на маркер Hiro.</div>
  <nav class="station-list" id="stations" aria-label="Выбор достопримечательности">
   <button class="station active" data-i="0" aria-pressed="true"><span class="num">01</span>Ратуша</button>
   <button class="station" data-i="1" aria-pressed="false"><span class="num">02</span>Собор</button>

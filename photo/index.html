@@ -79,6 +79,75 @@ header p{margin:0;color:#d5deea;font-size:12px;letter-spacing:.04em}
 }
 @media(max-height:650px){#panel{max-height:58svh}.intro-card{padding:18px}.intro-mark{margin-bottom:10px}.intro-points{margin:10px 0}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+
+/* Mobile-first fixed viewport: no page zooming or sideways scrolling */
+html,body{width:100%;height:100%;height:100dvh;overflow:hidden;overscroll-behavior:none}
+body{min-height:0}
+header{padding:calc(9px + env(safe-area-inset-top,0px)) 14px 8px}
+header h1{font-size:clamp(20px,5.5vw,27px);margin:3px 0 1px}
+header p{font-size:10px}
+#panel{left:8px;right:8px;bottom:calc(8px + var(--safe));max-height:54svh;max-height:54dvh;overflow:hidden;padding:10px 11px;border-radius:18px;display:flex;flex-direction:column;gap:0}
+#status{font-size:10px;line-height:1.25;margin:5px 0 7px;min-height:13px;max-height:26px;overflow:hidden}
+.station-list{gap:5px}
+.station{padding:7px 2px 6px;border-radius:10px;font-size:10px;line-height:1.05}
+.station .num{font-size:8px;margin-bottom:3px}
+.content{grid-template-columns:78px minmax(0,1fr);gap:9px;margin-top:9px;align-items:center;min-height:0}
+#preview{width:78px;height:82px;border-radius:10px}
+#stop-title{font-size:17px;line-height:1.08;margin-bottom:4px}
+#desc{font-size:10px;line-height:1.35;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.actions{gap:6px;margin-top:9px;flex-wrap:nowrap}
+.action{flex:1;min-width:0;padding:9px 5px;font-size:10px;white-space:nowrap}
+.utility-row{margin-top:7px;padding-top:6px}
+.text-button{font-size:9px}
+#credits{display:none}
+#help{max-height:100px;overflow:auto;font-size:10px;margin-top:6px}
+#quizbox{max-height:30svh;overflow:auto;margin-top:7px;padding:8px}
+#quizq{font-size:10px;margin-bottom:6px}
+#answers button{padding:7px;font-size:10px}
+#feedback{font-size:10px;margin-top:5px}
+#intro{padding:12px;overflow-y:auto;overscroll-behavior:contain}
+.intro-card{width:min(100%,430px);padding:17px;border-radius:20px}
+.intro-mark{width:36px;height:36px;border-radius:11px;font-size:20px;margin-bottom:10px}
+.intro-card h2{font-size:clamp(26px,7vw,34px);margin-bottom:8px}
+.intro-card p{font-size:11px;line-height:1.4;margin-bottom:8px}
+.intro-points{gap:6px;margin:10px 0}
+.intro-point{padding:8px;font-size:9px}
+.intro-point strong{font-size:10px}
+#start{padding:11px;font-size:12px}
+.intro-note{font-size:9px!important}
+@media(max-width:360px){
+ header .brand{font-size:9px}
+ header h1{font-size:19px}
+ header p{font-size:9px}
+ #panel{left:6px;right:6px;bottom:calc(6px + var(--safe));padding:8px;max-height:56dvh}
+ .station{font-size:9px}
+ .content{grid-template-columns:68px minmax(0,1fr);gap:7px}
+ #preview{width:68px;height:74px}
+ #stop-title{font-size:15px}
+ #desc{font-size:9px;-webkit-line-clamp:3}
+ .action{font-size:9px;padding:8px 3px}
+}
+@media(max-height:600px){
+ #panel{max-height:57dvh;padding:8px}
+ .content{margin-top:6px}
+ #preview{height:68px}
+ .actions{margin-top:6px}
+ .utility-row{margin-top:5px}
+ .intro-card{padding:13px}
+ .intro-points{margin:7px 0}
+}
+@media(min-width:760px){
+ html,body{height:100%;overflow:hidden}
+ header{padding:16px 24px}
+ #panel{left:auto;right:18px;bottom:18px;width:410px;max-height:54svh;max-height:54dvh;padding:14px;overflow:hidden}
+ .content{grid-template-columns:105px minmax(0,1fr);gap:12px}
+ #preview{width:105px;height:110px}
+ #stop-title{font-size:21px}
+ #desc{font-size:11px}
+ .station{font-size:11px}
+ .action{font-size:10px}
+}
+
 </style>
 </head>
 <body>
@@ -98,14 +167,14 @@ header p{margin:0;color:#d5deea;font-size:12px;letter-spacing:.04em}
    <div class="intro-point"><strong>03 · Аудиогид</strong>Рассказ можно прослушать прямо на телефоне.</div>
    <div class="intro-point"><strong>04 · Викторина</strong>Проверьте, что удалось запомнить.</div>
   </div>
-  <button id="start">Перейти к экскурсии</button>
-  <p class="intro-note">Понадобятся интернет, доступ к камере и маркер Hiro на распечатке или втором экране. При открытии страницы браузер может запросить доступ к камере — разрешите его, чтобы использовать AR.</p>
+  <button id="start">Открыть экскурсию</button>
+  <p class="intro-note">Понадобятся интернет, доступ к камере и маркер Hiro на распечатке или втором экране. Камера запускается при открытии страницы. Если браузер спросит разрешение — нажмите «Разрешить». Маркер Hiro нужно показать с другого экрана или распечатать.</p>
  </div>
 </div>
 
 <section id="panel" aria-label="Управление экскурсией">
  <div class="panel-head"><span class="eyebrow">Ваш маршрут</span><span class="pill" id="counter">Остановка 1 из 4</span></div>
- <div id="status" role="status" aria-live="polite">Нажмите «Начать экскурсию», чтобы включить AR-камеру.</div>
+ <div id="status" role="status" aria-live="polite">Наведите камеру на маркер Hiro. Выберите остановку ниже.</div>
  <nav class="station-list" id="stations" aria-label="Выбор достопримечательности">
   <button class="station active" data-i="0" aria-pressed="true"><span class="num">01</span>Ратуша</button>
   <button class="station" data-i="1" aria-pressed="false"><span class="num">02</span>Собор</button>
@@ -122,7 +191,7 @@ header p{margin:0;color:#d5deea;font-size:12px;letter-spacing:.04em}
   <button class="action" id="quiz">✦ Викторина</button>
  </div>
  <div id="quizbox"><div id="quizq"></div><div id="answers"></div><div id="feedback" aria-live="polite"></div></div>
- <div class="utility-row"><button class="text-button" id="help-toggle" aria-expanded="false">Как пользоваться AR?</button><button class="text-button" id="guide-mode">Режим без камеры</button></div>
+ <div class="utility-row"><button class="text-button" id="help-toggle" aria-expanded="false">Как пользоваться AR?</button><button class="text-button" id="guide-mode">Без камеры</button></div>
  <div id="help">1. Откройте <a href="https://ar-js-org.github.io/AR.js/data/images/HIRO.jpg" target="_blank" rel="noopener">маркер Hiro</a> на другом устройстве или распечатайте его.<br>2. Разрешите браузеру использовать камеру и направьте заднюю камеру на маркер.<br>3. Выберите остановку — фотография и подпись обновятся прямо над маркером.<br><br>Важно: маркер Hiro запускает AR-наложение, но камера не распознаёт само здание. Для экскурсии на местности с распознаванием фасадов потребуется отдельная технология геопривязки или image tracking.</div>
  <div id="credits">Фотографии: Wikimedia Commons. Ссылки на страницы изображений и сведения об авторах указаны внизу описания каждой остановки.</div>
 </section>

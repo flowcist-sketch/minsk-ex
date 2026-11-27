@@ -203,15 +203,16 @@ header .brand{font-size:9px}
  .action{font-size:9px;padding:7px 3px}
  header h1{font-size:18px}
 }
+/* Keep the same phone-first camera layout even on wide mobile browsers. */
 @media(min-width:760px){
- header{padding:15px 20px}
- header p{display:block;font-size:11px}
- #panel{left:16px;right:16px;bottom:16px;width:auto;max-height:32dvh;border:1px solid #ffffff2a;border-radius:18px;padding:12px 14px}
+ html,body{overflow:hidden!important}
+ header p{display:none}
+ #panel{left:0;right:0;bottom:0;width:auto;max-height:39dvh;border:0;border-top:1px solid #ffffff2a;border-radius:20px 20px 0 0;padding:10px 14px calc(9px + var(--safe))}
  .content{grid-template-columns:minmax(0,1fr)}
  .photo-wrap{display:none}
- #stop-title{font-size:20px}
- #desc{font-size:11px;-webkit-line-clamp:2}
- .station{font-size:11px}
+ #stop-title{font-size:18px}
+ #desc{font-size:10px;-webkit-line-clamp:2}
+ .station{font-size:10px}
 }
 
 </style>
@@ -264,10 +265,10 @@ header .brand{font-size:9px}
 
 <a-scene id="ar-scene" embedded vr-mode-ui="enabled:false" renderer="colorManagement:true; alpha:true" arjs="sourceType: webcam; debugUIEnabled:false; trackingMethod: best;" style="position:fixed;inset:0;z-index:1;pointer-events:none">
  <a-assets timeout="25000">
-  <img id="photo0" crossorigin="anonymous" src="https://commons.wikimedia.org/wiki/Special:FilePath/Belarus-Minsk-City_Hall-1.jpg?width=1200">
-  <img id="photo1" crossorigin="anonymous" src="https://commons.wikimedia.org/wiki/Special:FilePath/Holy_Spirit_Cathedral_in_Minsk.jpg?width=1200">
-  <img id="photo2" crossorigin="anonymous" src="https://commons.wikimedia.org/wiki/Special:FilePath/Minsk._Street_in_Trinity_Suburb.jpg?width=1200">
-  <img id="photo3" crossorigin="anonymous" src="https://commons.wikimedia.org/wiki/Special:FilePath/Archcathedral_Name_of_the_Blessed_Virgin_Mary_in_Minsk.jpg?width=1200">
+  <img id="photo0" crossorigin="anonymous" src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Belarus-Minsk-City_Hall-1.jpg/1280px-Belarus-Minsk-City_Hall-1.jpg">
+  <img id="photo1" crossorigin="anonymous" src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Holy_Spirit_Cathedral_in_Minsk.jpg/1024px-Holy_Spirit_Cathedral_in_Minsk.jpg">
+  <img id="photo2" crossorigin="anonymous" src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Minsk._Street_in_Trinity_Suburb.jpg/1280px-Minsk._Street_in_Trinity_Suburb.jpg">
+  <img id="photo3" crossorigin="anonymous" src="https://commons.wikimedia.org/wiki/Special:FilePath/Archcathedral_Name_of_the_Blessed_Virgin_Mary_in_Minsk.jpg?width=1000">
  </a-assets>
  <a-marker id="hiro" preset="hiro" emitevents="true">
   <a-entity id="ar-content" position="0 0.12 0">
@@ -284,15 +285,15 @@ header .brand{font-size:9px}
 (function(){
 "use strict";
 const stops=[
- {title:"Минская ратуша",alt:"Минская ратуша на площади Свободы",short:"Ратуша",asset:"#photo0",url:"https://commons.wikimedia.org/wiki/Special:FilePath/Belarus-Minsk-City_Hall-1.jpg?width=500",source:"https://commons.wikimedia.org/wiki/Category:City_Hall,_Minsk",
+ {title:"Минская ратуша",alt:"Минская ратуша на площади Свободы",short:"Ратуша",asset:"#photo0",url:"https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Belarus-Minsk-City_Hall-1.jpg/640px-Belarus-Minsk-City_Hall-1.jpg",source:"https://commons.wikimedia.org/wiki/Category:City_Hall,_Minsk",
   desc:"Минская ратуша — один из символов городского самоуправления и исторического центра. В 1499 году Минск получил Магдебургское право, закрепившее права горожан на самоуправление. Историческое здание было разобрано в XIX веке, а современную ратушу восстановили на площади Свободы в начале XXI века.",
   audio:"Перед вами Минская ратуша — один из символов исторического центра. В тысяча четыреста девяносто девятом году Минск получил Магдебургское право, закрепившее права горожан на самоуправление. Историческое здание было разобрано в девятнадцатом веке, а современную ратушу восстановили на площади Свободы в начале двадцать первого века.",
   question:"В каком году Минск получил Магдебургское право?",answers:["1499 год","1710 год","1860 год"],correct:0},
- {title:"Свято-Духов кафедральный собор",alt:"Свято-Духов кафедральный собор в Минске",short:"Собор",asset:"#photo1",url:"https://commons.wikimedia.org/wiki/Special:FilePath/Holy_Spirit_Cathedral_in_Minsk.jpg?width=500",source:"https://commons.wikimedia.org/wiki/File:Holy_Spirit_Cathedral_in_Minsk.jpg",
+ {title:"Свято-Духов кафедральный собор",alt:"Свято-Духов кафедральный собор в Минске",short:"Собор",asset:"#photo1",url:"https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Holy_Spirit_Cathedral_in_Minsk.jpg/640px-Holy_Spirit_Cathedral_in_Minsk.jpg",source:"https://commons.wikimedia.org/wiki/File:Holy_Spirit_Cathedral_in_Minsk.jpg",
   desc:"Кафедральный собор Сошествия Святого Духа — один из самых узнаваемых храмов Минска. Он расположен на площади Свободы в Верхнем городе. История здания связана с бывшим монастырским комплексом бернардинок XVII века. Сегодня собор остаётся важной частью духовной и архитектурной истории столицы.",
   audio:"Перед вами Свято-Духов кафедральный собор — один из самых узнаваемых храмов Минска. Он расположен на площади Свободы, в Верхнем городе. История здания связана с бывшим монастырским комплексом бернардинок семнадцатого века. Собор остаётся важной частью истории столицы.",
   question:"С каким монастырским комплексом связана история собора?",answers:["Бернардинок","Доминиканцев","Иезуитов"],correct:0},
- {title:"Троицкое предместье",alt:"Исторические улицы Троицкого предместья",short:"Троицкое",asset:"#photo2",url:"https://commons.wikimedia.org/wiki/Special:FilePath/Minsk._Street_in_Trinity_Suburb.jpg?width=500",source:"https://commons.wikimedia.org/wiki/File:Minsk._Street_in_Trinity_Suburb.jpg",
+ {title:"Троицкое предместье",alt:"Исторические улицы Троицкого предместья",short:"Троицкое",asset:"#photo2",url:"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Minsk._Street_in_Trinity_Suburb.jpg/640px-Minsk._Street_in_Trinity_Suburb.jpg",source:"https://commons.wikimedia.org/wiki/File:Minsk._Street_in_Trinity_Suburb.jpg",
   desc:"Троицкое предместье — исторический квартал на левом берегу Свислочи. Невысокие дома, небольшие улицы и уютные дворики помогают представить повседневную жизнь старого Минска. Сегодня это одно из самых любимых мест прогулок, где история города ощущается в масштабе улицы и отдельного дома.",
   audio:"Мы в Троицком предместье — историческом квартале на берегу Свислочи. Невысокие дома, небольшие улицы и уютные дворики помогают представить повседневную жизнь старого Минска. Сегодня это одно из самых любимых мест прогулок в столице.",
   question:"На берегу какой реки расположено Троицкое предместье?",answers:["Неман","Свислочь","Березина"],correct:1},
@@ -372,11 +373,21 @@ el("guide-mode").addEventListener("click",()=>{
  status("Режим экскурсии без камеры: выбирайте остановки, читайте описания, слушайте аудиогид и проходите викторину.","ok");
 });
 el("preview").addEventListener("error",()=>{el("preview").alt="Не удалось загрузить фотографию. Проверьте интернет-соединение.";});
-el("hiro").addEventListener("markerFound",()=>{markerVisible=true;status("Маркер Hiro найден! Фотография выбранной остановки отображается в AR.","ok");});
+el("hiro").addEventListener("markerFound",()=>{
+ markerVisible=true;
+ const activeImage=el("photo"+current);
+ if(activeImage && activeImage.complete && activeImage.naturalWidth>0) status("Маркер Hiro найден! Фото отображается в AR.","ok");
+ else status("Маркер найден, загружаю фотографию…");
+});
 el("hiro").addEventListener("markerLost",()=>{markerVisible=false;if(cameraRequested)status("Маркер не виден. Верните Hiro в кадр — AR-фотография появится снова.");});
 el("ar-scene").addEventListener("camera-init",()=>{cameraReady=true;if(cameraRequested)status("Камера подключена. Наведите её на маркер Hiro.","ok");});
 el("ar-scene").addEventListener("camera-error",()=>{cameraFailed=true;status("Не удалось открыть камеру. Проверьте разрешение для сайта, HTTPS и доступ камеры в настройках телефона.","error");});
 el("ar-scene").addEventListener("arjs-video-loaded",()=>{cameraReady=true;if(cameraRequested)status("Камера готова. Наведите её на маркер Hiro.","ok");});
+stops.forEach((stop,i)=>{
+ const asset=el("photo"+i);
+ asset.addEventListener("load",()=>{if(i===current && markerVisible)status("Фото загружено и готово к показу в AR.","ok");});
+ asset.addEventListener("error",()=>{if(i===current)status("Не загрузилось фото остановки. Проверьте интернет — камера при этом работает.","error");});
+});
 render();
 })();
 </script>

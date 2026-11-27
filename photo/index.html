@@ -98,8 +98,8 @@ header p{margin:0;color:#d5deea;font-size:12px;letter-spacing:.04em}
    <div class="intro-point"><strong>03 · Аудиогид</strong>Рассказ можно прослушать прямо на телефоне.</div>
    <div class="intro-point"><strong>04 · Викторина</strong>Проверьте, что удалось запомнить.</div>
   </div>
-  <button id="start">Начать экскурсию</button>
-  <p class="intro-note">Понадобятся интернет, доступ к камере и маркер Hiro на распечатке или втором экране. Камера запускается после нажатия кнопки.</p>
+  <button id="start">Перейти к экскурсии</button>
+  <p class="intro-note">Понадобятся интернет, доступ к камере и маркер Hiro на распечатке или втором экране. При открытии страницы браузер может запросить доступ к камере — разрешите его, чтобы использовать AR.</p>
  </div>
 </div>
 
@@ -167,7 +167,7 @@ const stops=[
   question:"Какой архитектурный стиль особенно заметен в облике костёла?",answers:["Готика","Барокко","Классицизм"],correct:1}
 ];
 const el=id=>document.getElementById(id);
-let current=0, markerVisible=false, cameraRequested=false, audioSupported=("speechSynthesis" in window);
+let current=0, markerVisible=false, cameraRequested=false, cameraReady=false, cameraFailed=false, audioSupported=("speechSynthesis" in window);
 function status(message,kind){el("status").textContent=message;el("status").dataset.kind=kind||"";}
 function render(){
  const s=stops[current];
@@ -193,9 +193,9 @@ document.querySelectorAll(".station").forEach(button=>button.addEventListener("c
 el("start").addEventListener("click",()=>{
  el("intro").style.display="none";
  cameraRequested=true;
- status("Подключаем камеру. Разрешите доступ в запросе браузера и наведите её на маркер Hiro.");
- const scene=el("ar-scene");
- if(scene.hasLoaded){status("Камера запускается. Если браузер спросит разрешение, нажмите «Разрешить».","");}
+ if(cameraFailed){status("Камера не подключилась. Проверьте разрешение для сайта и обновите страницу.","error");}
+ else if(cameraReady){status("Камера подключена. Наведите её на маркер Hiro.","ok");}
+ else{status("Экскурсия открыта. Ожидаем подключения камеры — разрешите доступ, если браузер спросит.");}
 });
 el("speak").addEventListener("click",()=>{
  if(!audioSupported){status("Озвучивание не поддерживается этим браузером. Текст рассказа доступен выше.","error");return;}
@@ -239,9 +239,9 @@ el("guide-mode").addEventListener("click",()=>{
 el("preview").addEventListener("error",()=>{el("preview").alt="Не удалось загрузить фотографию. Проверьте интернет-соединение.";});
 el("hiro").addEventListener("markerFound",()=>{markerVisible=true;status("Маркер Hiro найден! Фотография выбранной остановки отображается в AR.","ok");});
 el("hiro").addEventListener("markerLost",()=>{markerVisible=false;if(cameraRequested)status("Маркер не виден. Верните Hiro в кадр — AR-фотография появится снова.");});
-el("ar-scene").addEventListener("camera-init",()=>{if(cameraRequested)status("Камера подключена. Наведите её на маркер Hiro.","ok");});
-el("ar-scene").addEventListener("camera-error",()=>status("Не удалось открыть камеру. Проверьте разрешение для сайта, HTTPS и доступ камеры в настройках телефона.","error"));
-el("ar-scene").addEventListener("arjs-video-loaded",()=>{if(cameraRequested)status("Камера готова. Наведите её на маркер Hiro.","ok");});
+el("ar-scene").addEventListener("camera-init",()=>{cameraReady=true;if(cameraRequested)status("Камера подключена. Наведите её на маркер Hiro.","ok");});
+el("ar-scene").addEventListener("camera-error",()=>{cameraFailed=true;status("Не удалось открыть камеру. Проверьте разрешение для сайта, HTTPS и доступ камеры в настройках телефона.","error");});
+el("ar-scene").addEventListener("arjs-video-loaded",()=>{cameraReady=true;if(cameraRequested)status("Камера готова. Наведите её на маркер Hiro.","ok");});
 render();
 })();
 </script>

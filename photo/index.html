@@ -4,153 +4,246 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#101827">
+<meta name="description" content="Интерактивная AR-фотоэкскурсия по историческому центру Минска: ратуша, Свято-Духов собор, Троицкое предместье и Верхний город.">
 <title>Минск: ожившая история — AR-фотоэкскурсия</title>
+<link rel="preconnect" href="https://aframe.io">
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="preconnect" href="https://commons.wikimedia.org">
 <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
 <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.4.7/aframe/build/aframe-ar.js"></script>
 <style>
-:root{--bg:#101827;--panel:#172437;--gold:#e8c27b;--muted:#c5d0df;--line:#ffffff24}
+:root{color-scheme:dark;--bg:#0b1421;--panel:#142235;--panel2:#1b2c42;--gold:#e8c27b;--cream:#f5efe3;--muted:#aebdd0;--line:#ffffff20;--safe:env(safe-area-inset-bottom,0px)}
 *{box-sizing:border-box}
-html,body{margin:0;min-height:100%;background:var(--bg);color:#fff;font-family:system-ui,-apple-system,Segoe UI,sans-serif}
-body{overflow:hidden}
-#scene{position:fixed;inset:0;z-index:0}
-header{position:fixed;z-index:4;top:0;left:0;right:0;padding:calc(10px + env(safe-area-inset-top)) 14px 18px;background:linear-gradient(#101827f2,transparent);pointer-events:none}
-.kicker{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold)}
-h1{font-size:21px;margin:3px 0}.subtitle{font-size:12px;color:#d7dfeb}
-#panel{position:fixed;z-index:5;left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom));max-height:57vh;overflow:auto;background:#111d2df2;border:1px solid var(--line);border-radius:20px;padding:13px;box-shadow:0 12px 36px #0008;backdrop-filter:blur(12px)}
-.row{display:flex;gap:7px;align-items:center;flex-wrap:wrap}
-.pill{font-size:11px;color:#f7e6c5;border:1px solid #e8c27b70;border-radius:99px;padding:4px 8px}
-#status{font-size:12px;color:#f4dba9;margin:8px 0;line-height:1.4}
-#stations{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
-button{font:inherit;color:white;background:#263950;border:1px solid #ffffff30;border-radius:11px;padding:9px 10px}
-button.active{background:var(--gold);color:#172033;border-color:var(--gold);font-weight:700}
-#stations button{padding:8px 4px;font-size:12px}
-#content{display:grid;grid-template-columns:112px 1fr;gap:11px;margin-top:11px;align-items:start}
-#preview{width:112px;height:84px;object-fit:cover;border-radius:10px;background:#263950;border:1px solid var(--line)}
-h2{font-size:17px;margin:0 0 5px;color:var(--gold)}
-#desc{font-size:13px;line-height:1.43;color:#eef2f7}
-.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:11px}
-.actions button{font-size:12px}
-#quizbox{display:none;margin-top:10px;padding:11px;background:#24364c;border-radius:12px}
-#quizq{font-size:13px;line-height:1.4;margin-bottom:8px}
-#answers{display:grid;gap:6px}
-#answers button{text-align:left}
-#feedback{font-size:12px;margin-top:8px;color:#f7e6c5}
-.small{font-size:11px;color:var(--muted);line-height:1.4;margin-top:8px}
-#intro{position:fixed;z-index:10;inset:0;background:linear-gradient(145deg,#101827,#263950);display:flex;align-items:center;justify-content:center;padding:20px}
-.introcard{max-width:500px;border:1px solid var(--line);background:#ffffff0c;border-radius:22px;padding:22px}
-.introcard h2{font-size:25px;color:#fff}.introcard p{font-size:14px;line-height:1.5;color:#e1e8f1}
-#start{background:var(--gold);color:#172033;font-weight:800;padding:12px 18px}
-#sources{font-size:11px;color:#aebdd0}
-#sources a{color:#f1d69e}
-@media(min-width:800px){#panel{left:auto;right:18px;bottom:18px;width:440px;max-height:72vh}header{max-width:600px}}
+html,body{margin:0;min-height:100%;background:var(--bg);color:#f8fafc;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
+body{min-height:100svh}
+button{font:inherit;cursor:pointer}
+button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+#scene{position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse at 50% 25%,#243850,#0b1421 70%)}
+#scene canvas{display:block}
+.scrim{position:fixed;inset:0;z-index:2;pointer-events:none;background:linear-gradient(180deg,#07111dcc 0%,transparent 25%,transparent 55%,#07111d66 100%)}
+header{position:fixed;z-index:4;top:0;left:0;right:0;padding:calc(13px + env(safe-area-inset-top,0px)) 18px 22px;pointer-events:none}
+.brand{font-size:10px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}
+header h1{font-family:Georgia,serif;font-weight:500;font-size:clamp(23px,5vw,34px);letter-spacing:.01em;margin:5px 0 2px;text-shadow:0 2px 18px #0008}
+header p{margin:0;color:#d5deea;font-size:12px;letter-spacing:.04em}
+#panel{position:fixed;z-index:5;left:10px;right:10px;bottom:calc(10px + var(--safe));max-height:min(68svh,650px);overflow:auto;overscroll-behavior:contain;background:linear-gradient(145deg,#142235f7,#0e1a2bf5);border:1px solid var(--line);border-radius:22px;padding:14px;box-shadow:0 18px 55px #0009;backdrop-filter:blur(18px);scrollbar-width:thin;scrollbar-color:#64748b transparent}
+.panel-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.eyebrow{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.pill{border:1px solid #e8c27b70;border-radius:99px;padding:5px 9px;color:#f5dfb5;font-size:10px;white-space:nowrap}
+#status{font-size:12px;line-height:1.45;color:#f4dba9;margin:9px 0 11px;min-height:18px}
+#status[data-kind="error"]{color:#ffb4a9}
+#status[data-kind="ok"]{color:#a8e6bd}
+.station-list{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.station{min-width:0;border:1px solid var(--line);border-radius:12px;background:#ffffff08;color:#dce5f0;padding:9px 4px 8px;font-size:11px;line-height:1.15;transition:background .18s,border-color .18s}
+.station .num{display:block;font-size:9px;color:#9aabc0;margin-bottom:4px;letter-spacing:.12em}
+.station.active{background:var(--gold);color:#182333;border-color:var(--gold);font-weight:750}
+.station.active .num{color:#57472b}
+.content{display:grid;grid-template-columns:112px minmax(0,1fr);gap:12px;margin-top:13px;align-items:start}
+.photo-wrap{position:relative}
+#preview{display:block;width:112px;height:116px;object-fit:cover;border-radius:13px;background:#263950;border:1px solid var(--line)}
+.photo-tag{position:absolute;left:6px;bottom:6px;background:#08111dcc;color:#fff;border-radius:6px;padding:3px 6px;font-size:8px;letter-spacing:.1em;text-transform:uppercase}
+#stop-title{font-family:Georgia,serif;font-size:21px;line-height:1.08;font-weight:500;color:var(--gold);margin:0 0 7px}
+#desc{font-size:12px;line-height:1.5;color:#e5ebf3}
+.actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:13px}
+.action{border:1px solid #ffffff2b;border-radius:11px;background:#263950;color:#f5f7fa;padding:9px 11px;font-size:11px}
+.action.primary{background:var(--gold);border-color:var(--gold);color:#172033;font-weight:800}
+.action:disabled{opacity:.45;cursor:not-allowed}
+.utility-row{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}
+.text-button{border:0;background:none;color:#c5d3e3;font-size:10px;padding:5px 0;text-decoration:underline;text-underline-offset:3px}
+#quizbox{display:none;margin-top:11px;padding:12px;border-radius:13px;background:#20334a;border:1px solid var(--line)}
+#quizq{font-size:12px;line-height:1.4;margin-bottom:9px;color:#fff}
+#answers{display:grid;grid-template-columns:1fr;gap:6px}
+#answers button{border:1px solid #ffffff2a;border-radius:9px;background:#31465f;color:#fff;text-align:left;padding:9px;font-size:11px}
+#feedback{font-size:11px;line-height:1.4;margin-top:8px;color:#f5dfb5}
+#help{display:none;margin-top:10px;padding:10px 11px;border-radius:12px;background:#0d1929;border:1px solid var(--line);font-size:11px;line-height:1.5;color:#c8d4e2}
+#help a,#credits a{color:var(--gold)}
+#credits{font-size:9px;line-height:1.45;color:#8fa1b7;margin-top:10px}
+#intro{position:fixed;z-index:10;inset:0;display:flex;align-items:center;justify-content:center;padding:22px;background:linear-gradient(150deg,#0b1421f5,#1d3048f5 65%,#101b2bfa);backdrop-filter:blur(18px)}
+.intro-card{width:min(100%,490px);border:1px solid #ffffff24;border-radius:25px;padding:clamp(20px,5vw,30px);background:linear-gradient(145deg,#ffffff0d,#ffffff04);box-shadow:0 25px 80px #0008}
+.intro-mark{width:46px;height:46px;border-radius:15px;display:grid;place-items:center;background:#e8c27b1b;border:1px solid #e8c27b66;color:var(--gold);font-family:Georgia,serif;font-size:25px;margin-bottom:18px}
+.intro-card .brand{margin-bottom:8px}
+.intro-card h2{font-family:Georgia,serif;font-size:clamp(29px,7vw,40px);line-height:1.02;font-weight:500;margin:0 0 12px}
+.intro-card p{font-size:13px;line-height:1.55;color:#d2dce8;margin:0 0 13px}
+.intro-points{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:17px 0}
+.intro-point{border:1px solid var(--line);border-radius:12px;padding:10px;background:#ffffff07;font-size:10px;line-height:1.35;color:#dbe4ef}
+.intro-point strong{display:block;color:var(--gold);font-size:11px;margin-bottom:3px}
+#start{width:100%;border:0;border-radius:13px;background:var(--gold);color:#172033;font-weight:850;padding:13px 16px;font-size:13px}
+.intro-note{font-size:10px!important;color:#9eafc3!important;margin:10px 0 0!important}
+@media(min-width:760px){
+ #panel{left:auto;right:22px;bottom:22px;width:440px;max-height:calc(100svh - 145px);padding:17px}
+ header{padding-left:26px;top:8px}
+ .content{grid-template-columns:132px minmax(0,1fr);gap:15px}
+ #preview{width:132px;height:138px}
+ #stop-title{font-size:24px}
+ #desc{font-size:13px}
+ .station{font-size:12px;padding:10px 5px}
+}
+@media(max-height:650px){#panel{max-height:58svh}.intro-card{padding:18px}.intro-mark{margin-bottom:10px}.intro-points{margin:10px 0}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
 </style>
 </head>
 <body>
-<div id="intro"><div class="introcard">
- <div class="kicker">Интерактивная AR-фотоэкскурсия · Минск</div>
- <h2>Минск: ожившая история</h2>
- <p>Выбери одну из четырёх остановок. На экране появится настоящая фотография выбранного памятника, а после наведения камеры на маркер Hiro фотография появится в AR над маркером.</p>
- <p>Нужны интернет, HTTPS и разрешение браузера на камеру. Лучше использовать Chrome на Android или Safari на iPhone. Разреши доступ к камере и используй заднюю камеру.</p>
- <button id="start">Начать экскурсию</button>
- <p class="small">Для демонстрации распечатай маркер Hiro или открой его на другом экране: <a href="https://ar-js-org.github.io/AR.js/data/images/HIRO.jpg" target="_blank" rel="noopener">открыть маркер Hiro</a>.</p>
- </div></div>
+<div id="scene" aria-label="AR-сцена"></div>
+<div class="scrim"></div>
+<header><div class="brand">Минск · Беларусь</div><h1>Ожившая история</h1><p>Фотоэкскурсия по историческому центру</p></header>
 
-<header><div class="kicker">Минск · Беларусь</div><h1>Ожившая история</h1><div class="subtitle">Четыре места исторического центра · AR-фотографии · аудиогид</div></header>
+<div id="intro">
+ <div class="intro-card">
+  <div class="intro-mark" aria-hidden="true">М</div>
+  <div class="brand">Интерактивный маршрут · 4 остановки</div>
+  <h2>Минск:<br>ожившая история</h2>
+  <p>Познакомьтесь с историческим центром столицы через фотографии, короткие рассказы и небольшую викторину. Выберите место — и его фотография появится в AR при наведении камеры на маркер.</p>
+  <div class="intro-points">
+   <div class="intro-point"><strong>01 · Фотографии</strong>Реальные виды достопримечательностей вместо 3D-фигур.</div>
+   <div class="intro-point"><strong>02 · AR-режим</strong>Фото появляется над специальным маркером Hiro.</div>
+   <div class="intro-point"><strong>03 · Аудиогид</strong>Рассказ можно прослушать прямо на телефоне.</div>
+   <div class="intro-point"><strong>04 · Викторина</strong>Проверьте, что удалось запомнить.</div>
+  </div>
+  <button id="start">Начать экскурсию</button>
+  <p class="intro-note">Понадобятся интернет, доступ к камере и маркер Hiro на распечатке или втором экране. Камера запускается после нажатия кнопки.</p>
+ </div>
+</div>
 
-<a-scene id="scene" embedded vr-mode-ui="enabled:false" renderer="colorManagement:true; physicallyCorrectLights:true"
- arjs="sourceType: webcam; debugUIEnabled:false; trackingMethod: best;">
- <a-assets timeout="20000">
+<section id="panel" aria-label="Управление экскурсией">
+ <div class="panel-head"><span class="eyebrow">Ваш маршрут</span><span class="pill" id="counter">Остановка 1 из 4</span></div>
+ <div id="status" role="status" aria-live="polite">Нажмите «Начать экскурсию», чтобы включить AR-камеру.</div>
+ <nav class="station-list" id="stations" aria-label="Выбор достопримечательности">
+  <button class="station active" data-i="0" aria-pressed="true"><span class="num">01</span>Ратуша</button>
+  <button class="station" data-i="1" aria-pressed="false"><span class="num">02</span>Собор</button>
+  <button class="station" data-i="2" aria-pressed="false"><span class="num">03</span>Троицкое</button>
+  <button class="station" data-i="3" aria-pressed="false"><span class="num">04</span>Верхний город</button>
+ </nav>
+ <div class="content">
+  <div class="photo-wrap"><img id="preview" alt="Фотография Минской ратуши" src="https://commons.wikimedia.org/wiki/Special:FilePath/Belarus-Minsk-City_Hall-1.jpg?width=500"><span class="photo-tag">Фото остановки</span></div>
+  <div><h2 id="stop-title">Минская ратуша</h2><div id="desc"></div></div>
+ </div>
+ <div class="actions">
+  <button class="action primary" id="speak">▶ Слушать рассказ</button>
+  <button class="action" id="stop-audio">■ Остановить</button>
+  <button class="action" id="quiz">✦ Викторина</button>
+ </div>
+ <div id="quizbox"><div id="quizq"></div><div id="answers"></div><div id="feedback" aria-live="polite"></div></div>
+ <div class="utility-row"><button class="text-button" id="help-toggle" aria-expanded="false">Как пользоваться AR?</button><button class="text-button" id="guide-mode">Режим без камеры</button></div>
+ <div id="help">1. Откройте <a href="https://ar-js-org.github.io/AR.js/data/images/HIRO.jpg" target="_blank" rel="noopener">маркер Hiro</a> на другом устройстве или распечатайте его.<br>2. Разрешите браузеру использовать камеру и направьте заднюю камеру на маркер.<br>3. Выберите остановку — фотография и подпись обновятся прямо над маркером.<br><br>Важно: маркер Hiro запускает AR-наложение, но камера не распознаёт само здание. Для экскурсии на местности с распознаванием фасадов потребуется отдельная технология геопривязки или image tracking.</div>
+ <div id="credits">Фотографии: Wikimedia Commons. Ссылки на страницы изображений и сведения об авторах указаны внизу описания каждой остановки.</div>
+</section>
+
+<a-scene id="ar-scene" embedded vr-mode-ui="enabled:false" renderer="colorManagement:true; alpha:true" arjs="sourceType: webcam; debugUIEnabled:false; trackingMethod: best;" style="position:fixed;inset:0;z-index:1;pointer-events:none">
+ <a-assets timeout="25000">
   <img id="photo0" crossorigin="anonymous" src="https://commons.wikimedia.org/wiki/Special:FilePath/Belarus-Minsk-City_Hall-1.jpg?width=1200">
-  <img id="photo1" crossorigin="anonymous" src="https://commons.wikimedia.org/wiki/Special:FilePath/Archcathedral_Name_of_the_Blessed_Virgin_Mary_in_Minsk.jpg?width=1200">
-  <img id="photo2" crossorigin="anonymous" src="https://commons.wikimedia.org/wiki/Special:FilePath/Holy_Spirit_Cathedral_in_Minsk.jpg?width=1200">
-  <img id="photo3" crossorigin="anonymous" src="https://commons.wikimedia.org/wiki/Special:FilePath/Minsk._Street_in_Trinity_Suburb.jpg?width=1200">
+  <img id="photo1" crossorigin="anonymous" src="https://commons.wikimedia.org/wiki/Special:FilePath/Holy_Spirit_Cathedral_in_Minsk.jpg?width=1200">
+  <img id="photo2" crossorigin="anonymous" src="https://commons.wikimedia.org/wiki/Special:FilePath/Minsk._Street_in_Trinity_Suburb.jpg?width=1200">
+  <img id="photo3" crossorigin="anonymous" src="https://commons.wikimedia.org/wiki/Special:FilePath/Archcathedral_Name_of_the_Blessed_Virgin_Mary_in_Minsk.jpg?width=1200">
  </a-assets>
  <a-marker id="hiro" preset="hiro" emitevents="true">
-  <a-entity id="ar-photo" position="0 0.15 0">
-   <a-plane id="photo-plane" position="0 1.05 0" width="2.05" height="1.42" material="src:#photo0;shader:flat;side:double"></a-plane>
-   <a-plane position="0 1.05 -0.012" width="2.12" height="1.49" material="color:#172437;shader:flat;side:double"></a-plane>
-   <a-text id="ar-label" value="МИНСКАЯ РАТУША" position="0 1.86 0.01" align="center" color="#ffffff" width="3.8" side="double"></a-text>
+  <a-entity id="ar-content" position="0 0.12 0">
+   <a-plane id="photo-frame" position="0 1.03 -0.025" width="2.18" height="1.57" material="shader:flat;color:#172437;side:double"></a-plane>
+   <a-plane id="photo-plane" position="0 1.03 0" width="2.08" height="1.47" material="src:#photo0;shader:flat;side:double"></a-plane>
+   <a-plane position="0 1.84 0.006" width="2.08" height="0.25" material="shader:flat;color:#101827;transparent:true;opacity:0.88;side:double"></a-plane>
+   <a-text id="ar-label" value="МИНСКАЯ РАТУША" position="0 1.78 0.014" align="center" color="#ffffff" width="3.6" side="double"></a-text>
   </a-entity>
  </a-marker>
  <a-entity camera></a-entity>
 </a-scene>
 
-<section id="panel">
- <div class="row" style="justify-content:space-between"><span class="pill" id="counter">Остановка 1 из 4</span><span class="pill">Маркер Hiro</span></div>
- <div id="status">Запустите камеру и наведите её на маркер Hiro. Фотография появится над маркером.</div>
- <div id="stations">
-  <button data-i="0" class="active">Ратуша</button><button data-i="1">Костёл</button><button data-i="2">Собор</button><button data-i="3">Троицкое</button>
- </div>
- <div id="content">
-  <img id="preview" alt="Фотография выбранного места" src="https://commons.wikimedia.org/wiki/Special:FilePath/Belarus-Minsk-City_Hall-1.jpg?width=500">
-  <div><h2 id="title">Минская ратуша</h2><div id="desc"></div></div>
- </div>
- <div class="actions">
-  <button id="speak" class="active">▶ Слушать аудиогид</button>
-  <button id="stop">■ Стоп</button>
-  <button id="quiz">✦ Викторина</button>
- </div>
- <div id="quizbox"><div id="quizq"></div><div id="answers"></div><div id="feedback"></div></div>
- <div class="small">AR работает через маркер Hiro: это демонстрационный маркер, а не распознавание самого здания. Выбранная реальная фотография показывается как AR-панель. Для каждой остановки переключай вкладку сверху.</div>
- <div id="sources" class="small">Фотографии: Wikimedia Commons. Авторы и лицензии: <a href="https://commons.wikimedia.org/wiki/Category:City_Hall,_Minsk" target="_blank" rel="noopener">ратуша</a> · <a href="https://commons.wikimedia.org/wiki/File:Archcathedral_Name_of_the_Blessed_Virgin_Mary_in_Minsk.jpg" target="_blank" rel="noopener">костёл</a> · <a href="https://commons.wikimedia.org/wiki/File:Holy_Spirit_Cathedral_in_Minsk.jpg" target="_blank" rel="noopener">собор</a> · <a href="https://commons.wikimedia.org/wiki/File:Minsk._Street_in_Trinity_Suburb.jpg" target="_blank" rel="noopener">Троицкое</a>.</div>
-</section>
-
 <script>
+(function(){
+"use strict";
 const stops=[
- {title:"Минская ратуша",short:"Ратуша",img:"#photo0",url:"https://commons.wikimedia.org/wiki/Special:FilePath/Belarus-Minsk-City_Hall-1.jpg?width=1200",
-  desc:"Минская ратуша находится на площади Свободы и стала одним из символов исторического центра. Она связана с получением Минском Магдебургского права в 1499 году — права на городское самоуправление. Историческое здание было утрачено в XIX веке и восстановлено в начале XXI века.",
-  audio:"Перед вами Минская ратуша. Она находится на площади Свободы и стала одним из символов исторического центра. В тысяча четыреста девяносто девятом году Минск получил Магдебургское право — право на городское самоуправление. Историческое здание было утрачено в девятнадцатом веке и восстановлено в начале двадцать первого века.",
-  q:"В каком году Минск получил Магдебургское право?",a:["1499","1710","1860"],correct:0},
- {title:"Архикафедральный костёл Девы Марии",short:"Костёл",img:"#photo1",url:"https://commons.wikimedia.org/wiki/Special:FilePath/Archcathedral_Name_of_the_Blessed_Virgin_Mary_in_Minsk.jpg?width=1200",
-  desc:"Архикафедральный костёл Имени Пресвятой Девы Марии — католический храм в Верхнем городе. Его строительство началось в 1700-х годах, а архитектурный облик относится к барочной традиции. Храм входит в историческую застройку площади Свободы.",
-  audio:"Перед вами Архикафедральный костёл Имени Пресвятой Девы Марии. Это католический храм в Верхнем городе. Его строительство началось в начале восемнадцатого века, а архитектурный облик относится к барочной традиции. Обратите внимание на симметрию фасада и выразительные башни.",
-  q:"К какой архитектурной традиции относится облик костёла?",a:["Готика","Барокко","Конструктивизм"],correct:1},
- {title:"Кафедральный собор Сошествия Святого Духа",short:"Собор",img:"#photo2",url:"https://commons.wikimedia.org/wiki/Special:FilePath/Holy_Spirit_Cathedral_in_Minsk.jpg?width=1200",
-  desc:"Кафедральный собор Сошествия Святого Духа — один из главных православных храмов Минска. Его история связана с бывшим бернардинским монастырским комплексом XVII века. Собор расположен на площади Свободы и формирует узнаваемый силуэт Верхнего города.",
-  audio:"Перед вами Кафедральный собор Сошествия Святого Духа — один из главных православных храмов Минска. История места связана с монастырским комплексом семнадцатого века. Собор расположен на площади Свободы и формирует узнаваемый силуэт Верхнего города.",
-  q:"С каким историческим районом связан собор?",a:["Верхний город","Уручье","Чижовка"],correct:0},
- {title:"Троицкое предместье",short:"Троицкое",img:"#photo3",url:"https://commons.wikimedia.org/wiki/Special:FilePath/Minsk._Street_in_Trinity_Suburb.jpg?width=1200",
-  desc:"Троицкое предместье — исторический район Минска на берегу Свислочи. Его невысокая застройка, узкие улицы и небольшие площади напоминают о городской среде прошлых столетий. Сегодня это одно из известных мест прогулок и знакомства с историей столицы.",
-  audio:"Мы находимся в Троицком предместье — историческом районе Минска на берегу Свислочи. Его невысокая застройка, узкие улицы и небольшие площади напоминают о городской среде прошлых столетий. Представьте, как здесь кипела торговая и ремесленная жизнь старого города.",
-  q:"Какая река протекает рядом с Троицким предместьем?",a:["Неман","Свислочь","Березина"],correct:1}
+ {title:"Минская ратуша",alt:"Минская ратуша на площади Свободы",short:"Ратуша",asset:"#photo0",url:"https://commons.wikimedia.org/wiki/Special:FilePath/Belarus-Minsk-City_Hall-1.jpg?width=500",source:"https://commons.wikimedia.org/wiki/Category:City_Hall,_Minsk",
+  desc:"Минская ратуша — один из символов городского самоуправления и исторического центра. В 1499 году Минск получил Магдебургское право, закрепившее права горожан на самоуправление. Историческое здание было разобрано в XIX веке, а современную ратушу восстановили на площади Свободы в начале XXI века.",
+  audio:"Перед вами Минская ратуша — один из символов исторического центра. В тысяча четыреста девяносто девятом году Минск получил Магдебургское право, закрепившее права горожан на самоуправление. Историческое здание было разобрано в девятнадцатом веке, а современную ратушу восстановили на площади Свободы в начале двадцать первого века.",
+  question:"В каком году Минск получил Магдебургское право?",answers:["1499 год","1710 год","1860 год"],correct:0},
+ {title:"Свято-Духов кафедральный собор",alt:"Свято-Духов кафедральный собор в Минске",short:"Собор",asset:"#photo1",url:"https://commons.wikimedia.org/wiki/Special:FilePath/Holy_Spirit_Cathedral_in_Minsk.jpg?width=500",source:"https://commons.wikimedia.org/wiki/File:Holy_Spirit_Cathedral_in_Minsk.jpg",
+  desc:"Кафедральный собор Сошествия Святого Духа — один из самых узнаваемых храмов Минска. Он расположен на площади Свободы в Верхнем городе. История здания связана с бывшим монастырским комплексом бернардинок XVII века. Сегодня собор остаётся важной частью духовной и архитектурной истории столицы.",
+  audio:"Перед вами Свято-Духов кафедральный собор — один из самых узнаваемых храмов Минска. Он расположен на площади Свободы, в Верхнем городе. История здания связана с бывшим монастырским комплексом бернардинок семнадцатого века. Собор остаётся важной частью истории столицы.",
+  question:"С каким монастырским комплексом связана история собора?",answers:["Бернардинок","Доминиканцев","Иезуитов"],correct:0},
+ {title:"Троицкое предместье",alt:"Исторические улицы Троицкого предместья",short:"Троицкое",asset:"#photo2",url:"https://commons.wikimedia.org/wiki/Special:FilePath/Minsk._Street_in_Trinity_Suburb.jpg?width=500",source:"https://commons.wikimedia.org/wiki/File:Minsk._Street_in_Trinity_Suburb.jpg",
+  desc:"Троицкое предместье — исторический квартал на левом берегу Свислочи. Невысокие дома, небольшие улицы и уютные дворики помогают представить повседневную жизнь старого Минска. Сегодня это одно из самых любимых мест прогулок, где история города ощущается в масштабе улицы и отдельного дома.",
+  audio:"Мы в Троицком предместье — историческом квартале на берегу Свислочи. Невысокие дома, небольшие улицы и уютные дворики помогают представить повседневную жизнь старого Минска. Сегодня это одно из самых любимых мест прогулок в столице.",
+  question:"На берегу какой реки расположено Троицкое предместье?",answers:["Неман","Свислочь","Березина"],correct:1},
+ {title:"Верхний город и площадь Свободы",alt:"Архикафедральный костёл Девы Марии в Верхнем городе",short:"Верхний город",asset:"#photo3",url:"https://commons.wikimedia.org/wiki/Special:FilePath/Archcathedral_Name_of_the_Blessed_Virgin_Mary_in_Minsk.jpg?width=500",source:"https://commons.wikimedia.org/wiki/File:Archcathedral_Name_of_the_Blessed_Virgin_Mary_in_Minsk.jpg",
+  desc:"Верхний город — историческое ядро Минска, где формировались торговая, общественная и культурная жизнь города. На площади Свободы соседствуют ратуша, храмы и старинная застройка. Архикафедральный костёл Имени Пресвятой Девы Марии — один из выразительных памятников барочной архитектуры этого ансамбля.",
+  audio:"Перед вами Верхний город — историческое ядро Минска. Здесь формировались торговая, общественная и культурная жизнь города. На площади Свободы соседствуют ратуша, храмы и старинная застройка. Архикафедральный костёл Девы Марии — один из выразительных памятников барочной архитектуры этого ансамбля.",
+  question:"Какой архитектурный стиль особенно заметен в облике костёла?",answers:["Готика","Барокко","Классицизм"],correct:1}
 ];
-let current=0, cameraStarted=false;
 const el=id=>document.getElementById(id);
-function setPhoto(){
+let current=0, markerVisible=false, cameraRequested=false, audioSupported=("speechSynthesis" in window);
+function status(message,kind){el("status").textContent=message;el("status").dataset.kind=kind||"";}
+function render(){
  const s=stops[current];
- el("counter").textContent=`Остановка ${current+1} из 4`;
- el("title").textContent=s.title; el("desc").textContent=s.desc;
- el("preview").src=s.url.replace("width=1200","width=500");
- el("preview").alt="Фотография: "+s.title;
- el("photo-plane").setAttribute("material","src:"+s.img+";shader:flat;side:double");
+ el("counter").textContent="Остановка "+(current+1)+" из "+stops.length;
+ el("stop-title").textContent=s.title;
+ el("desc").textContent=s.desc;
+ el("preview").src=s.url;
+ el("preview").alt=s.alt;
+ el("photo-plane").setAttribute("material","src:"+s.asset+";shader:flat;side:double");
  el("ar-label").setAttribute("value",s.title.toLocaleUpperCase("ru-RU"));
- document.querySelectorAll("#stations button").forEach((b,i)=>b.classList.toggle("active",i===current));
- el("quizbox").style.display="none"; el("feedback").textContent="";
+ document.querySelectorAll(".station").forEach((b,i)=>{b.classList.toggle("active",i===current);b.setAttribute("aria-pressed",i===current?"true":"false");});
+ el("quizbox").style.display="none";
+ el("feedback").textContent="";
+ el("credits").innerHTML='Фото: Wikimedia Commons · <a href="'+s.source+'" target="_blank" rel="noopener">источник и сведения об изображении</a>.';
 }
-document.querySelectorAll("#stations button").forEach(b=>b.addEventListener("click",()=>{current=Number(b.dataset.i);speechSynthesis.cancel();setPhoto();}));
+function choose(index){
+ current=index;
+ if(audioSupported)window.speechSynthesis.cancel();
+ render();
+ if(markerVisible)status("Маркер Hiro виден — фотография обновлена.","ok");
+}
+document.querySelectorAll(".station").forEach(button=>button.addEventListener("click",()=>choose(Number(button.dataset.i))));
 el("start").addEventListener("click",()=>{
  el("intro").style.display="none";
- el("status").textContent="Если браузер запросит доступ к камере, нажмите «Разрешить». Наведите заднюю камеру на маркер Hiro — фотография выбранной остановки появится в AR.";
+ cameraRequested=true;
+ status("Подключаем камеру. Разрешите доступ в запросе браузера и наведите её на маркер Hiro.");
+ const scene=el("ar-scene");
+ if(scene.hasLoaded){status("Камера запускается. Если браузер спросит разрешение, нажмите «Разрешить».","");}
 });
 el("speak").addEventListener("click",()=>{
- if(!("speechSynthesis" in window)){el("status").textContent="В этом браузере недоступно озвучивание. Можно прочитать текст на экране.";return;}
- speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(stops[current].audio);u.lang="ru-RU";u.rate=.9;u.pitch=1;
- const voices=speechSynthesis.getVoices();const ru=voices.find(v=>v.lang.toLowerCase().startsWith("ru"));if(ru)u.voice=ru;
- speechSynthesis.speak(u);
+ if(!audioSupported){status("Озвучивание не поддерживается этим браузером. Текст рассказа доступен выше.","error");return;}
+ window.speechSynthesis.cancel();
+ const utterance=new SpeechSynthesisUtterance(stops[current].audio);
+ utterance.lang="ru-RU";utterance.rate=.92;utterance.pitch=1;
+ const voices=window.speechSynthesis.getVoices();
+ const russian=voices.find(v=>v.lang&&v.lang.toLowerCase().startsWith("ru"));
+ if(russian)utterance.voice=russian;
+ utterance.onerror=()=>status("Не удалось включить озвучивание. Проверьте настройки звука устройства.","error");
+ window.speechSynthesis.speak(utterance);
 });
-el("stop").addEventListener("click",()=>speechSynthesis.cancel());
+el("stop-audio").addEventListener("click",()=>{if(audioSupported)window.speechSynthesis.cancel();});
 el("quiz").addEventListener("click",()=>{
- const s=stops[current];el("quizbox").style.display="block";el("quizq").textContent=s.q;el("answers").innerHTML="";el("feedback").textContent="";
- s.a.forEach((answer,i)=>{const b=document.createElement("button");b.textContent=answer;b.addEventListener("click",()=>{
-  [...el("answers").children].forEach(x=>x.disabled=true);
-  el("feedback").textContent=i===s.correct?"Верно! Отличная работа.":"Не совсем. Правильный ответ: "+s.a[s.correct]+".";
-  el("feedback").style.color=i===s.correct?"#9ee6b0":"#ffd19a";
- });el("answers").appendChild(b);});
+ const s=stops[current];
+ el("quizbox").style.display="block";
+ el("quizq").textContent=s.question;
+ el("answers").replaceChildren();
+ el("feedback").textContent="";
+ s.answers.forEach((answer,index)=>{
+  const button=document.createElement("button");
+  button.type="button";button.textContent=answer;
+  button.addEventListener("click",()=>{
+   [...el("answers").children].forEach(b=>b.disabled=true);
+   el("feedback").textContent=index===s.correct?"Верно! Отличная работа.":"Почти! Правильный ответ: "+s.answers[s.correct]+".";
+   el("feedback").style.color=index===s.correct?"#a8e6bd":"#ffd19a";
+  });
+  el("answers").appendChild(button);
+ });
 });
-el("hiro").addEventListener("markerFound",()=>{el("status").textContent="Маркер Hiro найден! AR-фотография отображается над маркером.";});
-el("hiro").addEventListener("markerLost",()=>{el("status").textContent="Маркер потерян. Верни его в кадр, чтобы снова увидеть AR-фотографию.";});
-el("preview").addEventListener("error",()=>{el("preview").alt="Не удалось загрузить фото. Проверьте интернет-соединение.";});
-setPhoto();
+el("help-toggle").addEventListener("click",()=>{
+ const opened=el("help").style.display!=="block";
+ el("help").style.display=opened?"block":"none";
+ el("help-toggle").setAttribute("aria-expanded",opened?"true":"false");
+ el("help-toggle").textContent=opened?"Скрыть инструкцию":"Как пользоваться AR?";
+});
+el("guide-mode").addEventListener("click",()=>{
+ el("intro").style.display="none";
+ status("Режим экскурсии без камеры: выбирайте остановки, читайте описания, слушайте аудиогид и проходите викторину.","ok");
+});
+el("preview").addEventListener("error",()=>{el("preview").alt="Не удалось загрузить фотографию. Проверьте интернет-соединение.";});
+el("hiro").addEventListener("markerFound",()=>{markerVisible=true;status("Маркер Hiro найден! Фотография выбранной остановки отображается в AR.","ok");});
+el("hiro").addEventListener("markerLost",()=>{markerVisible=false;if(cameraRequested)status("Маркер не виден. Верните Hiro в кадр — AR-фотография появится снова.");});
+el("ar-scene").addEventListener("camera-init",()=>{if(cameraRequested)status("Камера подключена. Наведите её на маркер Hiro.","ok");});
+el("ar-scene").addEventListener("camera-error",()=>status("Не удалось открыть камеру. Проверьте разрешение для сайта, HTTPS и доступ камеры в настройках телефона.","error"));
+el("ar-scene").addEventListener("arjs-video-loaded",()=>{if(cameraRequested)status("Камера готова. Наведите её на маркер Hiro.","ok");});
+render();
+})();
 </script>
 </body>
 </html>
